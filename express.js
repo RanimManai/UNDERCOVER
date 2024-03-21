@@ -50,9 +50,9 @@ app.post('/submit', (req, res) => {
     newPlayer.game=i;
     games.push(newGame);
     console.log(`player ${playerName}created a game id:${i}`)
-    res.cookie("game",newGame.code,{maxAge:30000})
+    res.cookie("game",newGame.code,{maxAge:120000})
   }
-    res.cookie('username', playerName, {maxAge: 30000 });
+    res.cookie('username', playerName, {maxAge: 120000 });
 
 
     if ((gameCode)&&(gameIndex==-1)){
@@ -66,7 +66,7 @@ else{    res.status(200).send()}
 
 app.use(express.static(path.join(__dirname, 'dist')));
 app.get('/', (req, res) => {
-    res.cookie("start",false,{maxAge:10000})
+    res.cookie("start",false,{maxAge:120000})
     res.sendFile(path.join(__dirname, "dist", "index.html"));
     clear
 });
@@ -84,10 +84,9 @@ app.get('/update-cookie', (req, res) => {
         assignRoles(game.code)
         game.players.forEach((player)=> {
           if (player.name==req.cookies.username){
-          console.log("ahla")
-          res.cookie("word",player.word,{maxAge:30000})
+          res.cookie("word",player.word,{maxAge:120000})
         }})
-        res.cookie("start",true,{maxAge:5000})
+        res.cookie("start",true,{maxAge:12000})
         res.status(200).send()
         }
       }})
