@@ -4,7 +4,12 @@ import getCookieValue from "./getCookieValue.js";
 function Chat(){
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
-    const socket = io('http://localhost:3334');
+    const socket = io('http://localhost:3334',{
+      query: {
+        game: getCookieValue("game"),
+        username: getCookieValue("username")
+    }
+    });;
   
     useEffect(() => {
       socket.on('chat message', (msg) => {
@@ -18,7 +23,7 @@ function Chat(){
   
     const handleMessageSubmit = (e) => {
       e.preventDefault();
-      socket.emit('chat message', getCookieValue("username")+" says :"+messageInput);
+      socket.emit('chat message', getCookieValue("username")+" says : "+messageInput);
       setMessageInput('');
     };
   

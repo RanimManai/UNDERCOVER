@@ -49,7 +49,7 @@ app.post('/submit', (req, res) => {
     }
     newPlayer.game=i;
     games.push(newGame);
-    console.log(`player ${playerName}created a game id:${i}`)
+    console.log(`player ${playerName}created a game id: ${i}`)
     res.cookie("game",newGame.code,{maxAge:120000})
   }
     res.cookie('username', playerName, {maxAge: 120000 });
@@ -60,7 +60,6 @@ app.post('/submit', (req, res) => {
         res.status(400).send()
     }
 else{    res.status(200).send()}
-  console.log(games);
   
 });
 
@@ -112,13 +111,30 @@ function assignRoles(gameid) {
   });
   prevgameids.push(gameid);}
 }
-
+let voted=[]
 // socket.io
 const io = require('socket.io')(port+1,{cors: {origin: "*" }});
 io.on('connection', (socket) => {
+  const gameRoom = socket.handshake.query.game
+  const gameUser =socket.handshake.query.username
+  socket.join(gameRoom);
   socket.on('chat message', (msg) => {
+    if(msg.includes('/vote')){
+      games.forEach((game)=>{
+        if (game.code==gameRoom){
+          game.players.forEach((player)=>{
+            let whovoted=msg.replace("/vote"+playername,"")
+            if (msg.includes("/vote"+player.name)&& !voted.includes(whovoted)){
+              player.vote++
+              if()
+            io.to(gameRoom).emit('chat message', "Someone voted"+player.name)}})
+          }})
+        }
+      
+    else{
       console.log('Message:', msg);
-      io.emit('chat message', msg); 
+      io.to(gameRoom).emit('chat message', msg); 
+    }
   });
 
   
