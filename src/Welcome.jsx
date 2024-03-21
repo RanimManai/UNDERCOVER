@@ -2,11 +2,11 @@ import React from 'react';
 import getCookieValue from './getCookieValue.js';
 function Welcome() {
 
-    return (
-        <div>
+    return ( <>
             <h2>Welcome, {getCookieValue("username")}!</h2>
-            <h2>Your word is {getCookieValue("word")}</h2>
-        </div>
+            <h3 style={{textAlign:"center"}}>Waiting for players &#128515;</h3>
+            <h3 style={{textAlign:"center"}}>{getCookieValue("game")}</h3>
+    </>
     );
 }
 

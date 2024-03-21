@@ -8,7 +8,7 @@ function Username(props) {
     const [newGame, setNewGame] = useState(false);
     const [joinGame, setJoinGame] = useState(false);
     const [username, setUsername] = useState("");
-    const [code, setCode] = useState("");
+    const [code, setCode] = useState(0);
     const [num,setNum]= useState(0);
 
     const toggleNewGame = (e) => {
@@ -62,7 +62,7 @@ function Username(props) {
                 <form onSubmit={handleGameSubmit} method="POST"> 
                     <input type="text" name="username" placeholder="Enter your username" onChange={handleUsernameChange}></input>
                     <br></br><br></br>
-                    <input type="number" name="num" placeholder="Enter the number of players " min="0" max="100" onChange={handleNumChange}></input>  
+                    <input type="number" name="num" placeholder="Enter the number of players " min="1" max="15" onChange={handleNumChange}></input>  
                     <br></br>    <br></br>
                     <div className="buttons">
                         <button type="submit">Submit</button>
