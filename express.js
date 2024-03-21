@@ -45,11 +45,13 @@ app.post('/submit', (req, res) => {
         code:++i,
         maxPlayers:parseInt(playerNum),
         numPlayers:1,
-        players:[newPlayer]
+        players:[newPlayer],
+        numkick: 0,
+        end: false
     }
     newPlayer.game=i;
     games.push(newGame);
-    console.log(`player ${playerName}created a game id: ${i}`)
+    console.log(`player ${playerName} created a game id: ${i}`)
     res.cookie("game",newGame.code,{maxAge:120000})
   }
     res.cookie('username', playerName, {maxAge: 120000 });
@@ -102,6 +104,8 @@ function assignRoles(gameid) {
   const k = Math.floor(Math.random() * game.players.length);
   const undercoverWord = underList[j];
   const civilianWord = wordList[j];
+  game.word=civilianWord;
+  game.under=game.players[k];
     game.players.forEach((player,i)=>{
       if (i===k)
   {player.word= undercoverWord}
@@ -120,15 +124,58 @@ io.on('connection', (socket) => {
   socket.join(gameRoom);
   socket.on('chat message', (msg) => {
     if(msg.includes('/vote')){
+      let timer=0;
+      let intervalvote;
       games.forEach((game)=>{
         if (game.code==gameRoom){
           game.players.forEach((player)=>{
-            let whovoted=msg.replace("/vote"+playername,"")
+            let whovoted=msg.replace("/vote"+player.name,"")
             if (msg.includes("/vote"+player.name)&& !voted.includes(whovoted)){
+              io.to(gameRoom).emit('chat message', "Someone voted "+player.name)}
               player.vote++
-              if()
-            io.to(gameRoom).emit('chat message', "Someone voted"+player.name)}})
+              intervalvote=setInterval(()=>{timer++
+                let countdownmsg= "Time before kick " + (10-timer).toString()
+                console.log(countdownmsg)
+              io.to(gameRoom).emit('chat message',countdownmsg)
+            },1000)
+              setTimeout(()=>{ 
+                clearInterval(intervalvote)
+                game.players.sort((player1,player2)=>{return player2.vote-player1.vote})
+                if (player==game.players[0]&&timer>=10){
+                  io.to(gameRoom).emit('chat message',player.name+" kicked !")
+                  game.numkick++
+                  if ((game.numkick+2>=game.players.length)&&!game.end){
+                    game.end=true
+                    io.to(gameRoom).emit('chat message', "The undecover is victorious!")
+                    io.emit('changeCookie', { name: 'kicked', value: 'true', options: { maxAge: 180000 } });
+                  }
+                if(gameUser==player.name){
+                
+                  io.emit('changeCookie', { name: 'kicked', value: 'true', options: { maxAge: 180000 } });
+                }
+                if(player.name==game.under.name&&!game.end){
+                  game.end=true
+                  io.to(gameRoom).emit('chat message',"Civilians win ! "+player.name+" was the undercover.")
+                  io.emit('changeCookie', { name: 'kicked', value: 'true', options: { maxAge: 180000 } });
+                }
+              }    
+              },11000)
+              })
+              
           }})
+        }
+        else if (msg.includes("/guess")){
+          games.forEach((game)=>{
+            if (game.code==gameRoom){
+              if(msg.includes("/guess"+game.word)&&!game.end){
+                game.end=true
+                io.to(gameRoom).emit('chat message', "The undercover is victorious!")
+                io.emit('changeCookie', { name: 'kicked', value: 'true', options: { maxAge: 180000 } });
+              }
+        }})}
+        else if (msg.includes("help")){
+          io.to(gameRoom).emit('chat message', "/vote[name] to vote a suspect.") 
+          io.to(gameRoom).emit('chat message',"/guess[word] for the undecover to guess a word.")
         }
       
     else{

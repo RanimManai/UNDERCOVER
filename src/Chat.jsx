@@ -4,6 +4,8 @@ import getCookieValue from "./getCookieValue.js";
 function Chat(){
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
+    const [kicked,setKicked]=useState(false);
+
     const socket = io('http://localhost:3334',{
       query: {
         game: getCookieValue("game"),
@@ -15,6 +17,10 @@ function Chat(){
       socket.on('chat message', (msg) => {
         setMessages((prevMessages) => [...prevMessages, msg]);
       });
+      socket.on('changeCookie', (cookieData) => {
+        document.cookie = `${cookieData.name}=${cookieData.value}; ${cookieData.options}`;
+        setKicked(kicked=>Boolean(getCookieValue("kicked")))
+    });
   
       return () => {
         socket.disconnect();
@@ -23,8 +29,10 @@ function Chat(){
   
     const handleMessageSubmit = (e) => {
       e.preventDefault();
-      socket.emit('chat message', getCookieValue("username")+" says : "+messageInput);
-      setMessageInput('');
+      if (!(messageInput==="")){
+        socket.emit('chat message', getCookieValue("username")+" says : "+messageInput);
+        setMessageInput('');
+      }
     };
   
     return (
@@ -45,7 +53,7 @@ function Chat(){
             onChange={(e) => setMessageInput(e.target.value)}
             placeholder="Type ur message here"
             />
-          <button type="submit">Send</button>
+          <button type="submit" disabled={kicked?true:false}>Send</button>
         </form>
             </div>
     
