@@ -165,6 +165,7 @@ io.on('connection', (socket) => {
           }})
         }
         else if (msg.includes("/guess")){
+          io.to(gameRoom).emit('chat message', "Someone is trying to guess the word...")
           games.forEach((game)=>{
             if (game.code==gameRoom){
               if(msg.includes("/guess"+game.word)&&!game.end){
@@ -183,7 +184,6 @@ io.on('connection', (socket) => {
       io.to(gameRoom).emit('chat message', msg); 
     }
   });
-
   
   socket.on('disconnect', () => {
   });
