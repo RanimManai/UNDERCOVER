@@ -170,7 +170,6 @@ Header{
     }
     #chat input{
       height: 3rem;
-      margin-top: 0px;
       border-radius: 15px;
       border:solid #feb756 2px;
       text-align: center;
@@ -187,8 +186,8 @@ Header{
       color: #42516d;
       font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     }
-    #text {height: 50vh;
-      width: 50vw;
+    #text {height: 40vh;
+      width: 70vw;
       font-size: min(1.5rem,5vh,3vw);
       overflow-y: scroll;
     }
@@ -198,7 +197,7 @@ Header{
     #chat form{
       margin-top: 1vh;
       border: 0px;
-      width: 50.5vw;
+      width: 70vw;
       height: 7.8vh;
       display: flex;
       justify-content: space-between;
