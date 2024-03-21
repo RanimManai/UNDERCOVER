@@ -1,12 +1,15 @@
 import { useState } from "react";
 import Welcome from "./Welcome"; 
+import axios from "axios";
 
-function Username() {
-    const [formSubmitted, setFormSubmitted] = useState(false); 
+function Username(props) {
+    const formSubmitted= props.formSubmitted
+    const setFormSubmitted=props.setFormSubmitted;
     const [newGame, setNewGame] = useState(false);
-    const [username, setUsername] = useState("");
     const [joinGame, setJoinGame] = useState(false);
+    const [username, setUsername] = useState("");
     const [code, setCode] = useState("");
+    const [num,setNum]= useState(0);
 
     const toggleNewGame = (e) => {
         e.preventDefault();
@@ -22,28 +25,44 @@ function Username() {
         setFormSubmitted(false);
     };  
 
-    const handleNewGameSubmit = (e) => {
-        setFormSubmitted(true); 
+    const handleGameSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const formData = {
+                username: username,
+                code: code,
+                num: num
+            };
+            const response = await axios.post('http://localhost:3333/submit', formData);
+            if (response.status === 200) {
+                setFormSubmitted(true);
+            } else {
+                console.error('Server returned error:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error occurred:', error);
+        }
     };
 
-    const handleJoinGameSubmit = (e) => {
-        setFormSubmitted(true); 
-    };
 
     const handleUsernameChange = (e) => {
         setUsername(e.target.value);
     };
-    const handelCodeChange = (e) => {
+    const handleCodeChange = (e) => {
         setCode(e.target.value);
     }
+    const handleNumChange = (e) => {
+        setNum(e.target.value);
+    }
+    
 
     if (newGame && !formSubmitted) {
         return (
             <div className="Username">
-                <form onSubmit={handleNewGameSubmit} method="POST"> 
+                <form onSubmit={handleGameSubmit} method="POST"> 
                     <input type="text" name="username" placeholder="Enter your username" onChange={handleUsernameChange}></input>
                     <br></br><br></br>
-                    <input type="number" name="num" placeholder="Enter the number of players " min="0" max="100"></input>  
+                    <input type="number" name="num" placeholder="Enter the number of players " min="0" max="100" onChange={handleNumChange}></input>  
                     <br></br>    <br></br>
                     <div className="buttons">
                         <button type="submit">Submit</button>
@@ -53,17 +72,14 @@ function Username() {
         );
     }
 
-    if (formSubmitted && newGame) {
-        return <Welcome playerName={username}/>;
-    }
 
     if (joinGame && !formSubmitted) {
         return (
             <div className="Username">
-                <form onSubmit={handleJoinGameSubmit} method="POST"> 
+                <form onSubmit={handleGameSubmit} method="POST"> 
                     <input type="text" name="username" placeholder="Enter your username" onChange={handleUsernameChange}></input> 
                     <br></br><br></br>
-                    <input type="number" name="code" placeholder="Enter the code " onChange={handelCodeChange}></input>  
+                    <input type="number" name="code" placeholder="Enter the code " onChange={handleCodeChange}></input>  
                     <br></br>    <br></br>
                     <div className="buttons">
                         <button type="submit">Submit</button>
@@ -71,10 +87,6 @@ function Username() {
                 </form>
             </div>
         );
-    }
-
-    if (formSubmitted && joinGame) {
-        return <Welcome playerName={username}/>;
     }
 
     return (   

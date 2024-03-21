@@ -2,20 +2,18 @@ import { useState } from 'react'
 import Header from './Header.jsx'
 import Username from './Username.jsx'
 import Footer from './Footer.jsx'
-// import Success from './Success.jsx'
+import Welcome from './Welcome.jsx'
 
-// function App() {
-//  return <><Header></Header>
-//  <br /><br />
-//  <Username ></Username>
-//  <Footer />
-//  </>
-// }
+
 function App(){
-    return (
+    const [formSubmitted, setFormSubmitted] = useState(false);
+   if (!formSubmitted) return (
     <> <Header></Header>
-    <Username></Username>
-    {/* <Success></Success> */}
+    <Username formSubmitted={formSubmitted} setFormSubmitted={setFormSubmitted}></Username>
+    <Footer></Footer>
+    </>)
+    else return(<> <Header></Header>
+    <Welcome/>
     <Footer></Footer>
     </>)
 }
