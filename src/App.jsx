@@ -11,21 +11,9 @@ import getCookieValue from './getCookieValue.js'
 function App(){
     
     const [formSubmitted, setFormSubmitted] = useState(false);
-    const [start, setStart] = useState(Boolean(getCookieValue("start")));
+    const [start, setStart] = useState(Boolean(getCookieValue("start")||false));
 
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            fetch('http://localhost:3333/update-cookie')
-            .then(response => { console.log("updating!")})
-            .catch(error => {
-                console.error('Error updating cookie:', error);
-            });
-            const initialStartValue = Boolean(getCookieValue("start"));
-            setStart(start=>initialStartValue);
-        }, 1000);
-
-        return () => clearInterval(intervalId);
-    }, []);
+    
     
     if (!formSubmitted) return (
         <> <Header></Header>
@@ -35,7 +23,7 @@ function App(){
     else 
     {  
       if (!start) return(<> <Header></Header>
-    <Welcome/>
+    <Welcome start={start} setStart={setStart}/>
     <Footer></Footer>
     </>)
     else { return <><Header></Header>
