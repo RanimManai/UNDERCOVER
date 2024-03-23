@@ -13,7 +13,8 @@ function App(){
     const [formSubmitted, setFormSubmitted] = useState(false);
     const [start, setStart] = useState(Boolean(getCookieValue("start")||false));
 
-    
+    useEffect(()=>{
+    setStart(Boolean(getCookieValue("start")||false))});
     
     if (!formSubmitted) return (
         <> <Header></Header>

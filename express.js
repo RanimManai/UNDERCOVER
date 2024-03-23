@@ -47,7 +47,8 @@ app.post('/submit', (req, res) => {
         numPlayers:1,
         players:[newPlayer],
         numkick: 0,
-        end: false
+        end: false,
+        voted: []
     }
     newPlayer.game=i;
     games.push(newGame);
@@ -82,16 +83,28 @@ app.listen(port, () => {
 app.get('/update-cookie', (req, res) => {
 
   games.forEach((game)=>{
-    if (game.maxPlayers==game.numPlayers){
-      if(req.cookies.game==game.code){
-        assignRoles(game.code)
+    if(req.cookies.game==game.code){
+        if (game.maxPlayers==game.numPlayers){
+          assignRoles(game.code)
+          game.players.forEach((player)=> {
+            if (player.name==req.cookies.username){
+              res.cookie("word",player.word,{maxAge:120000})
+            }
+            res.cookie("start",true,{maxAge:3000})
+          })
+        }
+        if (game.maxPlayers<game.numPlayers){
         game.players.forEach((player)=> {
           if (player.name==req.cookies.username){
-          res.cookie("word",player.word,{maxAge:120000})
-        }})
-        res.cookie("start",true,{maxAge:3000})
-        res.status(200).send()
-        }
+            if(!player.word){
+              player.word=game.word;
+            }
+            res.cookie("word",player.word,{maxAge:120000})
+          }
+          res.cookie("start",true,{maxAge:3000})
+        })
+      }
+      res.status(200).send()
       }})
     }
   )
@@ -117,7 +130,7 @@ function assignRoles(gameid) {
   });
   prevgameids.push(gameid);}
 }
-let voted=[]
+
 // socket.io
 const io = require('socket.io')(port+1,{cors: {origin: "*" }});
 io.on('connection', (socket) => {
@@ -132,9 +145,10 @@ io.on('connection', (socket) => {
         if (game.code==gameRoom){
           game.players.forEach((player)=>{
             let whovoted=msg.replace("/vote"+player.name,"")
-            if (msg.includes("/vote"+player.name)&& !voted.includes(whovoted)){
+            if (msg.includes("/vote"+player.name)&& !game.voted.includes(whovoted)){
               io.to(gameRoom).emit('chat message', "Someone voted "+player.name)}
               player.vote++
+              game.voted.push(whovoted);
               intervalvote=setInterval(()=>{timer++
                 let countdownmsg= "Time before kick " + (10-timer).toString()
                 console.log(countdownmsg)
