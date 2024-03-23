@@ -66,10 +66,12 @@ else{    res.status(200).send()}
 });
 
 app.use(express.static(path.join(__dirname, 'dist')));
-app.get('/', (req, res) => {
+
+app.get('/',(req, res) => {
+  
     res.cookie("start",false,{maxAge:120000})
     res.sendFile(path.join(__dirname, "dist", "index.html"));
-    clear
+
 });
 
 app.listen(port, () => {
@@ -87,7 +89,7 @@ app.get('/update-cookie', (req, res) => {
           if (player.name==req.cookies.username){
           res.cookie("word",player.word,{maxAge:120000})
         }})
-        res.cookie("start",true,{maxAge:12000})
+        res.cookie("start",true,{maxAge:3000})
         res.status(200).send()
         }
       }})

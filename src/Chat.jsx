@@ -1,10 +1,16 @@
 import { useState,useEffect } from "react";
 import { io } from "socket.io-client";
 import getCookieValue from "./getCookieValue.js";
+const username=getCookieValue("username");
+const game=getCookieValue("game");
+const word=getCookieValue("word");
 function Chat(){
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
     const [kicked,setKicked]=useState(false);
+    const [username, setUsername] = useState('');
+    const [game, setGame] = useState('');
+    const [word, setWord] = useState('');
 
     const socket = io('http://localhost:3334',{
       query: {
@@ -14,6 +20,12 @@ function Chat(){
     });;
   
     useEffect(() => {
+      const usernameValue = getCookieValue("username");
+        const gameValue = getCookieValue("game");
+        const wordValue = getCookieValue("word");
+        setUsername(usernameValue);
+        setGame(gameValue);
+        setWord(wordValue);
       socket.on('chat message', (msg) => {
         setMessages((prevMessages) => [...prevMessages, msg]);
       });
@@ -30,14 +42,14 @@ function Chat(){
     const handleMessageSubmit = (e) => {
       e.preventDefault();
       if (!(messageInput==="")){
-        socket.emit('chat message', getCookieValue("username")+" says : "+messageInput);
+        socket.emit('chat message', username+" says : "+messageInput);
         setMessageInput('');
       }
     };
   
     return (
       <div id="chat">
-        <h3>{"Your word is "+getCookieValue("word")}</h3>
+        <h3>{"Your word is "+word}</h3>
          <div id="text">
           <ul>
           {messages.map((message, index) => (
