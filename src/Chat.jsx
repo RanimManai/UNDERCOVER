@@ -18,7 +18,7 @@ function Chat(){
         username: getCookieValue("username")
     }
     });;
-  
+    
     useEffect(() => {
       const usernameValue = getCookieValue("username");
         const gameValue = getCookieValue("game");

@@ -7,7 +7,6 @@ import Chat from './Chat.jsx'
 import getCookieValue from './getCookieValue.js'
 
 
-
 function App(){
     
     const [formSubmitted, setFormSubmitted] = useState(false);

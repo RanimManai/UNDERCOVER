@@ -144,11 +144,11 @@ io.on('connection', (socket) => {
       games.forEach((game)=>{
         if (game.code==gameRoom){
           game.players.forEach((player)=>{
-            let whovoted=msg.replace("/vote"+player.name,"")
-            if (msg.includes("/vote"+player.name)&& !game.voted.includes(whovoted)){
+            let whoVoted=msg.replace("/vote"+player.name,"")
+            if (msg.includes("/vote"+player.name)&& !game.voted.includes(whoVoted)){
               io.to(gameRoom).emit('chat message', "Someone voted "+player.name)}
               player.vote++
-              game.voted.push(whovoted);
+              game.voted.push(whoVoted);
               intervalvote=setInterval(()=>{timer++
                 let countdownmsg= "Time before kick " + (10-timer).toString()
                 console.log(countdownmsg)
