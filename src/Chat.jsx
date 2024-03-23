@@ -41,7 +41,7 @@ function Chat(){
   
     const handleMessageSubmit = (e) => {
       e.preventDefault();
-      if (!(messageInput==="")){
+      if (!(messageInput.replace(/\s+/g, "")==="")){
         socket.emit('chat message', username+" says : "+messageInput);
         setMessageInput('');
       }
